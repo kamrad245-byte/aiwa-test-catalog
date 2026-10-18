@@ -119,7 +119,13 @@ a:not(.btn):hover{color:var(--orange)}
 .ski-gallery figure:has(img[src$="casual-shorts.webp"]) img,
 .ski-gallery figure:has(img[src$="casual-w-zip-set.webp"]) img{aspect-ratio:4/3!important}
 </style>
-<style id="aiwa-product-descriptions">.ski-detail-description{max-width:850px;margin:16px 0 22px;color:#525c65;font-size:16px;line-height:1.65}</style></head><body><header><a aria-label="AIWA — на главную" class="logo" href="#top"><img alt="AIWA" height="88" src="assets/aiwa-logo.png" width="152"/></a><button aria-controls="siteNav" aria-expanded="false" aria-label="Открыть меню" class="menu-toggle" id="menuToggle" type="button">☰ Меню</button><nav aria-label="Основное меню" id="siteNav"><a href="#catalog">Каталог</a><a href="#production">Производство</a><a href="#works">Наши работы</a><a href="#clients">Нам доверяют</a><a href="#order">Заказ</a></nav></header><main id="top"><section class="hero-carousel" aria-label="Баннеры AIWA">
+<style id="aiwa-product-descriptions">.ski-detail-description{max-width:850px;margin:16px 0 22px;color:#525c65;font-size:16px;line-height:1.65}</style><style>
+.tiles .tile{position:relative;overflow:hidden;isolation:isolate;background-image:url('assets/category-cards-aiwa.webp');background-size:cover;background-position:center;border-color:#e0e3e7}
+.tiles .tile::before{content:"";position:absolute;inset:0;z-index:0;background:linear-gradient(90deg,rgba(255,255,255,.96) 0%,rgba(255,255,255,.89) 50%,rgba(255,255,255,.53) 100%);pointer-events:none;transition:background .2s}
+.tiles .tile>*{position:relative;z-index:1}
+.tiles .tile:hover::before,.tiles .tile:focus-visible::before{background:linear-gradient(90deg,rgba(255,255,255,.94) 0%,rgba(255,255,255,.84) 48%,rgba(255,255,255,.38) 100%)}
+@media(max-width:650px){.tiles .tile{background-position:center}}
+</style></head><body><header><a aria-label="AIWA — на главную" class="logo" href="#top"><img alt="AIWA" height="88" src="assets/aiwa-logo.png" width="152"/></a><button aria-controls="siteNav" aria-expanded="false" aria-label="Открыть меню" class="menu-toggle" id="menuToggle" type="button">☰ Меню</button><nav aria-label="Основное меню" id="siteNav"><a href="#catalog">Каталог</a><a href="#production">Производство</a><a href="#works">Наши работы</a><a href="#clients">Нам доверяют</a><a href="#order">Заказ</a></nav></header><main id="top"><section class="hero-carousel" aria-label="Баннеры AIWA">
 <div class="hero-slides" aria-live="polite">
 <article class="hero-slide is-active" data-hero-slide style="background-image:url('assets/home-banner-team.webp')">
 <div class="hero-copy"><div class="eyebrow">AIWA GROUP · ДЛЯ КОМАНД</div><h1>Форма для вашей команды</h1><p>Разработаем экипировку с индивидуальным дизайном для клуба и команды.</p><a class="btn" href="#catalog">Подобрать форму →</a></div>
