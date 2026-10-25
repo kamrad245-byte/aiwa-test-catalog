@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AIWA — 3D примерочная</title><style>
+*{box-sizing:border-box}body{font:16px -apple-system,BlinkMacSystemFont,Arial;margin:0;background:#f5f5f5;color:#222}header{padding:15px;background:white;border-bottom:1px solid #ddd;display:flex;justify-content:space-between}header b{color:#ec741b;font-size:24px}main{max-width:960px;margin:auto;padding:12px}.stage{height:57vh;min-height:370px;background:linear-gradient(#eee,#ddd);position:relative;border-radius:14px;overflow:hidden}canvas{display:block;width:100%;height:100%;touch-action:none}.notice{position:absolute;top:10px;left:10px;font-size:12px;color:#666}.panel{background:white;border-radius:12px;padding:15px;margin-top:10px}.row{display:flex;gap:8px;flex-wrap:wrap;margin:10px 0}button{border:1px solid #ddd;border-radius:8px;padding:11px;background:white;color:#222;font-weight:600}button.active{background:#f47b20;color:white;border-color:#f47b20}h3{margin:4px 0 10px;font-size:16px}.hint{font-size:13px;color:#777}#error{color:#9b281d}</style></head>
+<body><header><b>AIWA</b><strong>3D-примерочная · Тест</strong></header><main><div class="stage" id="stage"><div class="notice">Вращайте модель пальцем</div></div>
+<div class="panel"><h3>Верх</h3><div class="row" id="tops"></div><h3>Низ</h3><div class="row" id="bottoms"></div><h3>Цвет одежды</h3><div class="row" id="colors"></div><h3>Ракурс</h3><div class="row" id="views"></div><p class="hint" id="status">Загрузка 3D-сцены…</p><p id="error"></p></div></main>
+<script type="module">
+import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.164.1/build/three.module.js';
+const stage=document.querySelector('#stage'), status=document.querySelector('#status');
+const scene=new THREE.Scene();scene.background=new THREE.Color('#e8e8e8');
+const camera=new THREE.PerspectiveCamera(36,1,.1,100);camera.position.set(0,1.5,5.3);camera.lookAt(0,1.25,0);
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(stage.clientWidth,stage.clientHeight);stage.appendChild(renderer.domElement);
+const hemi=new THREE.HemisphereLight(0xffffff,0x8b8b95,2.4);scene.add(hemi);const key=new THREE.DirectionalLight(0xffffff,2);key.position.set(2,5,4);scene.add(key);
+const body=new THREE.Group();scene.add(body);const skin=new THREE.MeshStandardMaterial({color:0xecc5ac,roughness:.85}), blonde=new THREE.MeshStandardMaterial({color:0xe6bd60,roughness:.8});let fabric=new THREE.MeshStandardMaterial({color:0x222222,roughness:.85,side:THREE.DoubleSide});
+function sphere(x,y,z,a,b,c,mat,parent=body){const o=new THREE.Mesh(new THREE.SphereGeometry(1,24,16),mat);o.position.set(x,y,z);o.scale.set(a,b,c);parent.add(o);return o}
+function cylinder(x,y,z,r1,r2,height,mat,parent=body){const o=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,height,24),mat);o.position.set(x,y,z);parent.add(o);return o}
+sphere(0,2.70,0,.16,.21,.15,skin);sphere(0,2.79,-.07,.17,.21,.17,blonde);
+sphere(0,2.40,-.11,.08,.31,.13,blonde);sphere(-.13,2.36,-.09,.06,.35,.07,blonde);sphere(.13,2.36,-.09,.06,.35,.07,blonde);
+cylinder(0,2.52,0,.075,.075,.14,skin);
+sphere(0,2.04,0,.29,.42,.18,skin);sphere(0,1.58,0,.20,.23,.16,skin);sphere(0,1.31,0,.34,.26,.22,skin);
+sphere(-.17,2.08,.12,.19,.20,.16,skin);sphere(.17,2.08,.12,.19,.20,.16,skin);
+for(const s of [-1,1]){sphere(s*.36,1.94,0,.10,.35,.10,skin);sphere(s*.41,1.42,0,.075,.30,.075,skin);sphere(s*.15,.92,0,.15,.48,.14,skin);sphere(s*.15,.40,0,.105,.43,.10,skin);sphere(s*.15,.08,.09,.12,.07,.25,skin)}
+const garments=new THREE.Group();body.add(garments);
+const topNames=['Топ','Футболка','Лонгслив','Худи'];const bottomNames=['Юбка','Шорты','Леггинсы','Брюки'];
+let top=0,bottom=0,cloth='#222222';
+function draw(){garments.clear();fabric=new THREE.MeshStandardMaterial({color:cloth,roughness:.8,side:THREE.DoubleSide});
+sphere(0,2.02,0,.295,top===0?.27:.35,.195,fabric,garments);
+if(top>0)for(const s of [-1,1])sphere(s*.35,top===2||top===3?1.73:2.02,0,.105,top===2||top===3?.48:.18,.11,fabric,garments);
+if(bottom===0)cylinder(0,1.15,0,.28,.45,.49,fabric,garments);
+if(bottom===1){for(const s of [-1,1])sphere(s*.15,1.16,0,.17,.25,.18,fabric,garments)}
+if(bottom>1)for(const s of [-1,1])sphere(s*.15,.63,0,bottom===2?.15:.18,.75,.15,fabric,garments)}
+function buttons(el,names,callback,selected){document.querySelector(el).replaceChildren(...names.map((n,i)=>{const b=document.createElement('button');b.textContent=n;b.className=i===selected?'active':'';b.onclick=()=>callback(i);return b}))}
+function refresh(){buttons('#tops',topNames,i=>{top=i;draw();refresh()},top);buttons('#bottoms',bottomNames,i=>{bottom=i;draw();refresh()},bottom)}
+refresh();draw();buttons('#colors',['Чёрный','Белый','Оранжевый','Синий','Розовый'],i=>{cloth=['#222222','#f7f7f7','#e67722','#245baf','#dc7293'][i];draw();colors(i)},0);
+buttons('#views',['Спереди','Сбоку','Сзади'],i=>{body.rotation.y=[0,Math.PI/2,Math.PI][i];views(i)},0);
+function views(i){buttons('#views',['Спереди','Сбоку','Сзади'],j=>{body.rotation.y=[0,Math.PI/2,Math.PI][j];views(j)},i)}
+function colors(i){buttons('#colors',['Чёрный','Белый','Оранжевый','Синий','Розовый'],j=>{cloth=['#222222','#f7f7f7','#e67722','#245baf','#dc7293'][j];draw();colors(j)},i)}\nlet dragging=false,prevX=0;renderer.domElement.addEventListener('pointerdown',e=>{dragging=true;prevX=e.clientX;renderer.domElement.setPointerCapture(e.pointerId)});renderer.domElement.addEventListener('pointerup',()=>dragging=false);renderer.domElement.addEventListener('pointermove',e=>{if(dragging){body.rotation.y+=(e.clientX-prevX)*.01;prevX=e.clientX}});
+function resize(){let w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h);camera.aspect=w/h;camera.updateProjectionMatrix()}addEventListener('resize',resize);resize();status.textContent='3D-модель загружена. Выбирайте одежду и ракурсы.';renderer.setAnimationLoop(()=>renderer.render(scene,camera));
+</script></body></html>
